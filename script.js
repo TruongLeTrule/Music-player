@@ -5,6 +5,9 @@ const heading = $("header h2");
 const cd = $(".cd");
 const cdThumb = $(".cd-thumb");
 const audio = $("#audio");
+const playBtn = $(".btn.btn-toggle-play");
+const player = $(".player");
+const progress = $("#progress");
 
 const app = {
   currentIndex: 0,
@@ -101,6 +104,7 @@ const app = {
   handleEvents: function () {
     const cdWidth = cd.offsetWidth;
 
+    // Justify the cd thumb size when scrolling
     document.onscroll = function () {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       const newWidth = cdWidth - scrollY;
@@ -109,15 +113,54 @@ const app = {
 
       cd.style.opacity = newWidth / cdWidth;
     };
+
+    // Handle when click play button
+    playBtn.onclick = function () {
+      if (!audio.paused) {
+        audio.pause();
+      } else {
+        audio.play();
+      }
+    };
+
+    // When song is playing
+    audio.onplay = function () {
+      player.classList.add("playing");
+    };
+
+    // When song is paused
+    audio.onpause = function () {
+      player.classList.remove("playing");
+    };
+
+    // When song duration is changed
+    audio.ontimeupdate = function () {
+      if (audio.duration) {
+        const progressPercent = Math.floor(
+          (audio.currentTime / audio.duration) * 100
+        );
+        progress.value = progressPercent;
+      }
+    };
+
+    // When drag the progress bar
+    progress.onchange = function (e) {
+      const seekTime = (e.target.value * audio.duration) / 100;
+      audio.currentTime = seekTime;
+    };
   },
 
   start: function () {
+    // Define new properties
     this.defineProperties();
 
+    // Wait for specific events
     this.handleEvents();
 
+    // Load current song
     this.loadCurrentSong();
 
+    // Render song to playlist
     this.render();
   },
 };
