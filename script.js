@@ -70,9 +70,9 @@ const app = {
   ],
 
   render: function () {
-    const htmls = this.songs.map((song) => {
+    const htmls = this.songs.map((song, index) => {
       return `
-        <div class="song">
+        <div class="song ${index === this.currentIndex ? "active" : ""}">
         <div
           class="thumb"
           style="
@@ -171,6 +171,7 @@ const app = {
       }
       _this.nextSong();
       audio.play();
+      _this.render();
     };
 
     // When Previous button is clicked
