@@ -104,6 +104,12 @@ const app = {
   handleEvents: function () {
     const cdWidth = cd.offsetWidth;
 
+    const cdThumbAnimate = cdThumb.animate([{ transform: "rotate(360deg)" }], {
+      duration: 10000,
+      iteration: Infinity,
+    });
+    cdThumbAnimate.pause();
+
     // Justify the cd thumb size when scrolling
     document.onscroll = function () {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
@@ -126,11 +132,13 @@ const app = {
     // When song is playing
     audio.onplay = function () {
       player.classList.add("playing");
+      cdThumbAnimate.play();
     };
 
     // When song is paused
     audio.onpause = function () {
       player.classList.remove("playing");
+      cdThumbAnimate.pause();
     };
 
     // When song duration is changed
