@@ -8,6 +8,8 @@ const audio = $("#audio");
 const playBtn = $(".btn.btn-toggle-play");
 const player = $(".player");
 const progress = $("#progress");
+const nextBtn = $(".btn.btn-next");
+const preBtn = $(".btn.btn-prev");
 
 const app = {
   currentIndex: 0,
@@ -102,11 +104,12 @@ const app = {
   },
 
   handleEvents: function () {
+    const _this = this;
     const cdWidth = cd.offsetWidth;
 
     const cdThumbAnimate = cdThumb.animate([{ transform: "rotate(360deg)" }], {
       duration: 10000,
-      iteration: Infinity,
+      iterations: Infinity,
     });
     cdThumbAnimate.pause();
 
@@ -151,11 +154,39 @@ const app = {
       }
     };
 
+    // When Next button is clicked
+    nextBtn.onclick = function () {
+      _this.nextSong();
+      audio.play();
+    };
+
+    // When Previous button is clicked
+    preBtn.onclick = function () {
+      _this.preSong();
+      audio.play();
+    };
+
     // When drag the progress bar
     progress.onchange = function (e) {
       const seekTime = (e.target.value * audio.duration) / 100;
       audio.currentTime = seekTime;
     };
+  },
+
+  nextSong: function () {
+    this.currentIndex++;
+    if (this.currentIndex >= this.songs.length) {
+      this.currentIndex = 0;
+    }
+    this.loadCurrentSong();
+  },
+
+  preSong: function () {
+    this.currentIndex--;
+    if (this.currentIndex < 0) {
+      this.currentIndex = this.songs.length - 1;
+    }
+    this.loadCurrentSong();
   },
 
   start: function () {
