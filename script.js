@@ -172,6 +172,7 @@ const app = {
       _this.nextSong();
       audio.play();
       _this.render();
+      _this.scrollToActiveSong();
     };
 
     // When Previous button is clicked
@@ -181,6 +182,8 @@ const app = {
       }
       _this.preSong();
       audio.play();
+      _this.render();
+      _this.scrollToActiveSong();
     };
 
     // When Random button is clicked
@@ -228,6 +231,25 @@ const app = {
     } while (this.currentIndex === newIndex);
     this.currentIndex = newIndex;
     this.loadCurrentSong();
+  },
+
+  scrollToActiveSong: function () {
+    let activeSong = $(".song.active");
+    if (activeSong.offsetTop > 100) {
+      setTimeout(() => {
+        $(".song.active").scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }, 300);
+    } else {
+      setTimeout(() => {
+        $(".song.active").scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 300);
+    }
   },
 
   start: function () {
