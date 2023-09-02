@@ -10,9 +10,11 @@ const player = $(".player");
 const progress = $("#progress");
 const nextBtn = $(".btn.btn-next");
 const preBtn = $(".btn.btn-prev");
+const randomBtn = $(".btn.btn-random");
 
 const app = {
   currentIndex: 0,
+  isRandom: false,
 
   songs: [
     {
@@ -154,22 +156,34 @@ const app = {
       }
     };
 
+    // When drag the progress bar
+    progress.onchange = function (e) {
+      const seekTime = (e.target.value * audio.duration) / 100;
+      audio.currentTime = seekTime;
+    };
+
     // When Next button is clicked
     nextBtn.onclick = function () {
+      if (_this.isRandom) {
+        _this.playRandom();
+      }
       _this.nextSong();
       audio.play();
     };
 
     // When Previous button is clicked
     preBtn.onclick = function () {
+      if (_this.isRandom) {
+        _this.playRandom();
+      }
       _this.preSong();
       audio.play();
     };
 
-    // When drag the progress bar
-    progress.onchange = function (e) {
-      const seekTime = (e.target.value * audio.duration) / 100;
-      audio.currentTime = seekTime;
+    // When Random button is clicked
+    randomBtn.onclick = function () {
+      _this.isRandom = !_this.isRandom;
+      randomBtn.classList.toggle("active", _this.isRandom);
     };
   },
 
@@ -186,6 +200,15 @@ const app = {
     if (this.currentIndex < 0) {
       this.currentIndex = this.songs.length - 1;
     }
+    this.loadCurrentSong();
+  },
+
+  playRandom: function () {
+    let nextIndex;
+    do {
+      nextIndex = Math.floor(Math.random() * this.songs.length);
+    } while (this.currentIndex === nextIndex);
+    this.currentIndex = nextIndex;
     this.loadCurrentSong();
   },
 
