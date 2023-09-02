@@ -11,10 +11,12 @@ const progress = $("#progress");
 const nextBtn = $(".btn.btn-next");
 const preBtn = $(".btn.btn-prev");
 const randomBtn = $(".btn.btn-random");
+const repeatBtn = $(".btn.btn-repeat");
 
 const app = {
   currentIndex: 0,
   isRandom: false,
+  isRepeat: false,
 
   songs: [
     {
@@ -185,6 +187,21 @@ const app = {
       _this.isRandom = !_this.isRandom;
       randomBtn.classList.toggle("active", _this.isRandom);
     };
+
+    // When Repeat button is clicked
+    repeatBtn.onclick = function () {
+      _this.isRepeat = !_this.isRepeat;
+      repeatBtn.classList.toggle("active", _this.isRepeat);
+    };
+
+    // When a song is ended
+    audio.onended = function () {
+      if (_this.isRepeat) {
+        audio.play();
+      } else {
+        nextBtn.click();
+      }
+    };
   },
 
   nextSong: function () {
@@ -204,11 +221,11 @@ const app = {
   },
 
   playRandom: function () {
-    let nextIndex;
+    let newIndex;
     do {
-      nextIndex = Math.floor(Math.random() * this.songs.length);
-    } while (this.currentIndex === nextIndex);
-    this.currentIndex = nextIndex;
+      newIndex = Math.floor(Math.random() * this.songs.length);
+    } while (this.currentIndex === newIndex);
+    this.currentIndex = newIndex;
     this.loadCurrentSong();
   },
 
