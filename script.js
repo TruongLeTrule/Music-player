@@ -12,6 +12,7 @@ const nextBtn = $(".btn.btn-next");
 const preBtn = $(".btn.btn-prev");
 const randomBtn = $(".btn.btn-random");
 const repeatBtn = $(".btn.btn-repeat");
+const playlist = $(".playlist");
 
 const app = {
   currentIndex: 0,
@@ -72,7 +73,9 @@ const app = {
   render: function () {
     const htmls = this.songs.map((song, index) => {
       return `
-        <div class="song ${index === this.currentIndex ? "active" : ""}">
+        <div class="song ${
+          index === this.currentIndex ? "active" : ""
+        } " data-index=${index}>
         <div
           class="thumb"
           style="
@@ -204,6 +207,25 @@ const app = {
         audio.play();
       } else {
         nextBtn.click();
+      }
+    };
+
+    // When a song in playlist is clicked
+    playlist.onclick = function (e) {
+      let notActiveSong = e.target.closest(".song:not(.active)");
+      let option = e.target.closest(".option");
+      if (notActiveSong || option) {
+        // Handle song
+        if (notActiveSong) {
+          _this.currentIndex = Number(notActiveSong.dataset.index);
+          _this.render();
+          _this.loadCurrentSong();
+          audio.play();
+        }
+
+        // Handle option
+        if (option) {
+        }
       }
     };
   },
