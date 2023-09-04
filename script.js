@@ -20,6 +20,7 @@ const app = {
   currentIndex: 0,
   isRandom: false,
   isRepeat: false,
+  playedSongs: [],
 
   config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
   setConfig: function (key, value) {
@@ -182,6 +183,8 @@ const app = {
 
     // When Next button is clicked
     nextBtn.onclick = function () {
+      _this.addPlayedSong();
+      console.log(`next: ${_this.playedSongs}`);
       if (_this.isRandom) {
         _this.playRandom();
       }
@@ -193,6 +196,8 @@ const app = {
 
     // When Previous button is clicked
     preBtn.onclick = function () {
+      _this.addPlayedSong();
+      console.log(`pre: ${_this.playedSongs}`);
       if (_this.isRandom) {
         _this.playRandom();
       }
@@ -223,6 +228,7 @@ const app = {
       } else {
         nextBtn.click();
       }
+      _this.addPlayedSong();
     };
 
     // When a song in playlist is clicked
@@ -247,7 +253,9 @@ const app = {
   },
 
   nextSong: function () {
-    this.currentIndex++;
+    if (!this.isRandom) {
+      this.currentIndex++;
+    }
     if (this.currentIndex >= this.songs.length) {
       this.currentIndex = 0;
     }
@@ -255,7 +263,9 @@ const app = {
   },
 
   preSong: function () {
-    this.currentIndex--;
+    if (!this.isRandom) {
+      this.currentIndex--;
+    }
     if (this.currentIndex < 0) {
       this.currentIndex = this.songs.length - 1;
     }
@@ -266,7 +276,10 @@ const app = {
     let newIndex;
     do {
       newIndex = Math.floor(Math.random() * this.songs.length);
-    } while (this.currentIndex === newIndex);
+    } while (
+      this.currentIndex === newIndex ||
+      this.playedSongs.includes(newIndex)
+    );
     this.currentIndex = newIndex;
     this.loadCurrentSong();
   },
@@ -287,6 +300,15 @@ const app = {
           block: "center",
         });
       }, 300);
+    }
+  },
+
+  addPlayedSong: function () {
+    if (this.playedSongs.length >= this.songs.length - 1) {
+      this.playedSongs = [];
+    }
+    if (!this.playedSongs.includes(this.currentIndex)) {
+      this.playedSongs.push(this.currentIndex);
     }
   },
 
