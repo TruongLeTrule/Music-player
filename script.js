@@ -219,6 +219,7 @@ const app = {
         if (notActiveSong) {
           _this.currentIndex = Number(notActiveSong.dataset.index);
           _this.render();
+          _this.scrollToActiveSong();
           _this.loadCurrentSong();
           audio.play();
         }
