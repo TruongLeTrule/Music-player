@@ -1,6 +1,8 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
+const PLAYER_STORAGE_KEY = "TruongLe";
+
 const heading = $("header h2");
 const cd = $(".cd");
 const cdThumb = $(".cd-thumb");
@@ -18,6 +20,12 @@ const app = {
   currentIndex: 0,
   isRandom: false,
   isRepeat: false,
+
+  config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
+  setConfig: function (key, value) {
+    this.config[key] = value;
+    localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(this.config));
+  },
 
   songs: [
     {
@@ -69,6 +77,11 @@ const app = {
       image: "./assets/images/charlieputh.jpeg",
     },
   ],
+
+  loadConfig: function () {
+    this.isRandom = this.config.isRandom;
+    this.isRepeat = this.config.isRepeat;
+  },
 
   render: function () {
     const htmls = this.songs.map((song, index) => {
@@ -192,12 +205,14 @@ const app = {
     // When Random button is clicked
     randomBtn.onclick = function () {
       _this.isRandom = !_this.isRandom;
+      _this.setConfig("isRandom", _this.isRandom);
       randomBtn.classList.toggle("active", _this.isRandom);
     };
 
     // When Repeat button is clicked
     repeatBtn.onclick = function () {
       _this.isRepeat = !_this.isRepeat;
+      _this.setConfig("isRepeat", _this.isRepeat);
       repeatBtn.classList.toggle("active", _this.isRepeat);
     };
 
@@ -276,6 +291,9 @@ const app = {
   },
 
   start: function () {
+    // Load user's config
+    this.loadConfig();
+
     // Define new properties
     this.defineProperties();
 
@@ -287,6 +305,10 @@ const app = {
 
     // Render song to playlist
     this.render();
+
+    // Load random and repeat state
+    randomBtn.classList.toggle("active", this.isRandom);
+    repeatBtn.classList.toggle("active", this.isRepeat);
   },
 };
 
